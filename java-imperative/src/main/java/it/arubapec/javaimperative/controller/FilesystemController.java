@@ -12,12 +12,17 @@ public class FilesystemController {
 
     private final FilesystemService filesystemService;
 
-    @GetMapping("/create/{filename}")
+    @GetMapping("/create/{filename:.+}")
     public String createfile(@PathVariable("filename") String filename){
         return filesystemService.createfile(filename);
     }
 
-    @GetMapping("/delete/{filename}")
+    @GetMapping("/create/noerror/{filename:.+}")
+    public String createfileManagedError(@PathVariable("filename") String filename){
+        return filesystemService.createfileManagedError(filename);
+    }
+
+    @GetMapping("/delete/{filename:.+}")
     public String deletefile(@PathVariable("filename") String filename){
         return filesystemService.deletefile(filename);
     }

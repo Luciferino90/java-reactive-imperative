@@ -9,6 +9,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class FilesystemService {
@@ -18,9 +19,8 @@ public class FilesystemService {
     @Value("${working.root.path}")
     private String workingRootPath;
 
-    @PostConstruct
-    public void createTmpDir(){
-        new File(workingRootPath).mkdirs();
+    public void createTmpDir(Path folder){
+        folder.toFile().mkdirs();
     }
 
     public String createfile(String filename){
@@ -28,16 +28,31 @@ public class FilesystemService {
         Path path = Paths.get(workingRootPath, filename);
         if (path.toFile().exists())
             throw new RuntimeException("Il file risulta già esistente: " + filename);
+        createTmpDir(path.getParent());
         FilesystemUtils.writeRandomFile(path, size);
-        return "Durata in ms: " + (new Date().getTime() - startTime);
+        return "Durata in ms: " + (new Date().getTime() - startTime) + " path: " + path.toString();
+    }
+
+    public String createfileManagedError(String filename){
+        return createfileManagedError(filename, workingRootPath);
+    }
+
+    public String createfileManagedError(String filename, String rootPath){
+        Long startTime = new Date().getTime();
+        Path path = Paths.get(rootPath, filename);
+        if (path.toFile().exists())
+            return createfileManagedError(filename, Paths.get(workingRootPath, UUID.randomUUID().toString()).toString());
+        else
+            createTmpDir(path.getParent());
+            FilesystemUtils.writeRandomFile(path, size);
+            return "Durata in ms: " + (new Date().getTime() - startTime) + " path: " + path.toString();
     }
 
     public String deletefile(String filename){
         Path path = Paths.get(workingRootPath, filename);
-        if (path.toFile().exists())
+        if (!path.toFile().exists())
             throw new RuntimeException("Il file non esiste: " + filename);
-        boolean res = path.toFile().delete();
-        return new Boolean(res).toString();
+        return Boolean.toString(path.toFile().delete());
     }
 
 }

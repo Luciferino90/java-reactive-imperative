@@ -28,7 +28,7 @@ public class FilesystemUtils {
                     closeChannel(asyncChannelDataBufferT.getT1());
                     return asyncChannelDataBufferT.getT2();
                 })
-                .map(list -> "Durata in ms: " + ( new Date().getTime() - startTime.get()));
+                .map(list -> "Durata in ms: " + ( new Date().getTime() - startTime.get()) + " path: " + toWrite.toString());
     }
 
     private static Publisher<DataBuffer> multipleChunks(int size) {
