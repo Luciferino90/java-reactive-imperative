@@ -1,11 +1,9 @@
 package it.arubapec.javaimperative.service;
 
-import it.arubapec.javaimperative.utils.FilesystemUtils;
+import it.arubapec.javareactive.utils.FilesystemUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -29,7 +27,7 @@ public class FilesystemService {
         if (path.toFile().exists())
             throw new RuntimeException("Il file risulta già esistente: " + filename);
         createTmpDir(path.getParent());
-        FilesystemUtils.writeRandomFile(path, size);
+        FilesystemUtils.imperativeEriteRandomFile(path, size);
         return "Durata in ms: " + (new Date().getTime() - startTime) + " path: " + path.toString();
     }
 
@@ -44,7 +42,7 @@ public class FilesystemService {
             return createfileManagedError(filename, Paths.get(workingRootPath, UUID.randomUUID().toString()).toString());
         else
             createTmpDir(path.getParent());
-            FilesystemUtils.writeRandomFile(path, size);
+            FilesystemUtils.imperativeEriteRandomFile(path, size);
             return "Durata in ms: " + (new Date().getTime() - startTime) + " path: " + path.toString();
     }
 

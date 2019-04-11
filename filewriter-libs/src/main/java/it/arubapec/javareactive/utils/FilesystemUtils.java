@@ -8,6 +8,7 @@ import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -20,7 +21,7 @@ public class FilesystemUtils {
     private static Random random = new Random();
     private static DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
 
-    public static Mono<String> writeRandomFile(Path toWrite, int size){
+    public static Mono<String> reactiveWriteRandomFile(Path toWrite, int size){
         AtomicLong startTime = new AtomicLong(new Date().getTime());
         return Mono.just(getAsyncFileChannel(toWrite))
                 .zipWhen(asyncChannel -> DataBufferUtils.write(multipleChunks(size), asyncChannel).collectList())
@@ -29,6 +30,17 @@ public class FilesystemUtils {
                     return asyncChannelDataBufferT.getT2();
                 })
                 .map(list -> "Durata in ms: " + ( new Date().getTime() - startTime.get()) + " path: " + toWrite.toString());
+    }
+
+    public static Path imperativeEriteRandomFile(Path toWrite, int size){
+        try (AsynchronousFileChannel file = AsynchronousFileChannel.open(toWrite, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE, StandardOpenOption.READ)){
+            byte[] contents = new byte[size];
+            random.nextBytes(contents);
+            file.write(ByteBuffer.wrap(contents, 0, size), 0);
+        }catch(Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        return toWrite;
     }
 
     private static Publisher<DataBuffer> multipleChunks(int size) {

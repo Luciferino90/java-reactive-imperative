@@ -14,17 +14,20 @@ public class FilesystemController {
 
     @GetMapping("/create/{filename:.+}")
     public String createfile(@PathVariable("filename") String filename){
-        return filesystemService.createfile(filename);
+        String res = filesystemService.createfile(filename);
+        return res;
     }
 
     @GetMapping("/create/noerror/{filename:.+}")
     public String createfileManagedError(@PathVariable("filename") String filename){
-        return filesystemService.createfileManagedError(filename);
+        String res = filesystemService.createfileManagedError(filename);
+        return res;
     }
 
     @GetMapping("/delete/{filename:.+}")
     public String deletefile(@PathVariable("filename") String filename){
-        return filesystemService.deletefile(filename);
+        String res = filesystemService.deletefile(filename);
+        return res;
     }
 
 }
