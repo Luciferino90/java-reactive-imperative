@@ -17,6 +17,7 @@ public class RoutingConfig {
     public RouterFunction getRoutingConfiguration(){
         return RouterFunctions.route()
                 .GET("/create/{filename}", filesystemHandle::createfile)
+                .GET("/failurecreate/{filename}", filesystemHandle::failureCreatefile)
                 .GET("/delete/{filename}", filesystemHandle::deletefile)
                 .build();
     }
